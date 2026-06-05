@@ -509,7 +509,7 @@
         // =========================================================
         // CONFIGURATION: วาง URL ของ Google Apps Script Web App ของคุณที่นี่
         // =========================================================
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYH9azDajhiY8XIybZ20JM3KgOvHk4AclNN03oc3D9X4gBG3vVrgNess7qWD3GFN_oKw/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_Dk7HTYxQ0jEQpWcMyC-Y5aRk9P_-mlykwgCcjxd0Kti2QvaKgC5M5P4TcGS7YcwRjw/exec";
 
         // =========================================================
         // DATA SET: รายการข้อสอบ 10 ข้อ (ชื่อเครื่องมือ, คำหลักที่ใช้ตรวจ, และ URL รูปภาพ)
@@ -732,25 +732,41 @@
             document.getElementById("micBtn").disabled = status;
         }
 
+        // =========================================================
+        // ฟังก์ชันส่งข้อมูลผลการทดสอบไปยัง Google Sheet (เวอร์ชันอัปเดตใช้ FormData)
+        // =========================================================
         function saveScoreToGoogleSheet(finalScore) {
             const studentName = document.getElementById("studentName").value;
 
-            const formData = new URLSearchParams();
+            // ตรวจสอบว่ามีชื่อผู้เรียนและ URL ระบบปลายทางหรือไม่
+            if (!SCRIPT_URL || SCRIPT_URL.includes("เปลี่ยนเป็น_URL")) {
+                console.warn("⚠️ ยังไม่ได้กำหนด SCRIPT_URL หรือ URL ไม่ถูกต้อง ข้อมูลจะไม่ถูกบันทึก");
+                return;
+            }
+
+            // ใช้ ออบเจกต์ FormData เพื่อส่งข้อมูล
+            const formData = new FormData();
             formData.append("name", studentName);
-            formData.append("score", finalScore); // ส่งคะแนนเฉลี่ยไปบันทึก
+            formData.append("score", finalScore); 
             formData.append("pass", passCount);
             formData.append("fail", failCount);
 
+            console.log("🚀 กำลังส่งข้อมูลไปยัง Google Sheet...", studentName);
+
+            // ส่งข้อมูลผ่าน Fetch API พร้อมเปิดโหมด ทะลุข้อจำกัด CORS (no-cors)
             fetch(SCRIPT_URL, {
                 method: "POST",
                 mode: "no-cors", 
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: formData.toString()
+                body: formData
             })
-            .then(() => console.log("Data packet sent to Google Sheets backend successfully."))
-            .catch(error => console.error("Error writing log:", error));
+            .then(() => {
+                console.log("✅ บันทึกข้อมูลลง Google Sheet เรียบร้อยแล้ว (Data packet dispatched)");
+                document.getElementById("heardText").innerHTML = "📊 บันทึกคะแนนลงระบบฐานข้อมูลสำเร็จแล้ว!";
+            })
+            .catch(error => {
+                console.error("❌ เกิดข้อผิดพลาดในระบบส่งข้อมูล:", error);
+                document.getElementById("heardText").innerHTML = "❌ ไม่สามารถบันทึกคะแนนได้ กรุณาตรวจสอบอินเทอร์เน็ต";
+            });
         }
 
         function playPassSound() {
