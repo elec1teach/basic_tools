@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ระบบทดสอบเครื่องมือไฟฟ้าและอิเล็กทรอนิกส์ด้วย AI</title>
+    <title>ระบบทดสอบเรียกชื่อเครื่องมือช่างไฟฟ้าและอิเล็กทรอนิกส์ด้วย AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Prompt:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -251,25 +251,27 @@
             border: 1px solid rgba(0, 240, 255, 0.15);
         }
 
-        /* พื้นที่แสดงรูปภาพเครื่องมือ */
+        /* ---------------------------------------------------------
+           ปรับปรุงขนาดพื้นที่แสดงรูปภาพเครื่องมือ (ขยายใหญ่ขึ้น 1 เท่าตัว)
+           --------------------------------------------------------- */
         .tool-image-container {
             width: 100%;
-            max-width: 320px;
-            height: 220px;
+            max-width: 540px; /* ขยายจาก 320px */
+            height: 340px;    /* ขยายจาก 220px */
             margin: 20px auto;
             border-radius: 16px;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--line);
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.7);
         }
 
         .tool-image {
-            max-width: 100%;
-            max-height: 100%;
+            max-width: 95%;
+            max-height: 95%;
             object-fit: contain;
             transition: 0.3s ease;
         }
@@ -419,6 +421,7 @@
             .main-grid { grid-template-columns: 1fr; }
             .top-bar { gap: 10px; }
             .stat-value { font-size: 22px; }
+            .tool-image-container { height: 260px; } /* ปรับความสูงให้พอดีมือถือ */
         }
     </style>
 </head>
@@ -442,7 +445,7 @@
                 <div class="logo-area">
                     <div class="logo">EE</div>
                     <div>
-                        <h1>แบบทดสอบเครื่องมือวัดไฟฟ้าและอิเล็กทรอนิกส์</h1>
+                        <h1>แบบทดสอบเรียกชื่อเครื่องมือช่างไฟฟ้าและอิเล็กทรอนิกส์</h1>
                         <div class="subtitle">ระบบทดสอบการรับฟังเสียงพูดของนักเรียนแบบReal-Time</div>
                     </div>
                 </div>
@@ -497,7 +500,8 @@
 
         <div class="teacher-box glass">
             <div class="teacher-title">ผู้พัฒนาโครงการ</div>
-            แผนกวิชาช่างไฟฟ้าและอิเล็กทรอนิกส์<br>
+            ครูวิทยากร  วรรณา<br>
+            แผนกวิชาช่างอิเล็กทรอนิกส์
             วิทยาลัยสารพัดช่างศรีสะเกษ
         </div>
 
@@ -507,106 +511,44 @@
 
     <script>
         // =========================================================
-        // CONFIGURATION: วาง URL ของ Google Apps Script Web App ของคุณที่นี่
+        // CONFIGURATION: URL ของ Google Apps Script Web App ของคุณ
         // =========================================================
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_Dk7HTYxQ0jEQpWcMyC-Y5aRk9P_-mlykwgCcjxd0Kti2QvaKgC5M5P4TcGS7YcwRjw/exec";
 
         // =========================================================
-        // DATA SET: รายการข้อสอบ 10 ข้อ (ชื่อเครื่องมือ, คำหลักที่ใช้ตรวจ, และ URL รูปภาพ)
+        // DATA SET: รายการข้อสอบ 10 ข้อ
         // =========================================================
         const questions = [
-            { name: "มัลติมิเตอร์", keywords: ["มัลติมิเตอร์", "อนาล็อกมัลติมิเตอร์", "มิเตอร์เข็ม"], img: "https://i.postimg.cc/SRTtSYwY/meter.png" },
-            { name: "หัวแร้งบัดกรี", keywords: ["หัวแร้ง", "หัวแร้งบัดกรี", "หัวแร้งแช่", "หัวแร้งปืน"], img: "https://i.postimg.cc/mZ8nNKtr/h-wrae-ng.png" },
-            { name: "คีมตัดสายไฟ", keywords: ["คีมตัด", "คีมตัดสายไฟ", "คีมปากเฉียง"], img: "https://i.postimg.cc/2ycXkLsR/kh-m-pak-che-yng.png" },
-            { name: "คีมปอกสายไฟ", keywords: ["คีมปอกสายไฟ", "คีมปอก"], img: "https://i.postimg.cc/sx60jGkF/kh-m-pxk-say-fi.png" },
-            { name: "ไขควง", keywords: ["ไขควง", "ไขควงชุด", "ไขควงเช็คไฟ"], img: "https://i.postimg.cc/v83KLCcQ/khikhwng.png" },
-            { name: "เอซีแคล้มป์มิเตอร์", keywords: ["แคล้มป์มิเตอร์", "แคล้มป์", "ดิจิตอลแคล้มป์มิเตอร์"], img: "https://i.postimg.cc/J402TKkb/Clamp-Meter.png" },
-            { name: "คีมปากแหลม", keywords: ["คีมปากแหลม", "คีมจับ"], img: "https://i.postimg.cc/jd2F8v7y/kh-m-pak-haelm.png" },
-            { name: "ออสซิลโลสโคป", keywords: ["ออสซิลโลสโคป", "สโคป"], img: "https://i.postimg.cc/QxCy6STR/scope.png" },
-            { name: "ไขควงนาฬิกา", keywords: ["ไขควงนาฬิกา", "ไขควงเล็ก"], img: "https://i.postimg.cc/cCMz84r1/khi-khwng-nal-ka.png" },
-            { name: "เทปพันสายไฟ", keywords: ["เทปพันสายไฟ", "เทปดำ"], img: "https://i.postimg.cc/02jBtZSs/thepph-n-say-fi.png" }
+            { name: "มัลติมิเตอร์", keywords: ["มัลติมิเตอร์", "มัลติมิเตอร์ดิจิตอล", "มัลติมิเตอร์แบบเข็ม"], img: "https://images.unsplash.com/photo-1601524909162-be87252be298?auto=format&fit=crop&w=400&q=80" },
+            { name: "หัวแร้งบัดกรี", keywords: ["หัวแร้ง", "หัวแร้งบัดกรี", "หัวแร้งแช่", "หัวแร้งปืน"], img: "https://images.unsplash.com/photo-1558449028-b53a39d100fc?auto=format&fit=crop&w=400&q=80" },
+            { name: "คีมตัดสายไฟ", keywords: ["คีมตัด", "คีมตัดสายไฟ", "คีมปากเฉียง"], img: "https://images.unsplash.com/photo-1540240941121-a20ef10be951?auto=format&fit=crop&w=400&q=80" },
+            { name: "คีมปอกสายไฟ", keywords: ["คีมปอกสายไฟ", "คีมปอก"], img: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80" },
+            { name: "ไขควงวัดไฟ", keywords: ["ไขควงวัดไฟ", "ไขควงลองไฟ", "ไขควงเช็คไฟ"], img: "https://images.unsplash.com/photo-1621905252507-b354bc25edac?auto=format&fit=crop&w=400&q=80" },
+            { name: "สว่านไฟฟ้า", keywords: ["สว่าน", "สว่านไฟฟ้า", "สว่านแบต"], img: "https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=400&q=80" },
+            { name: "ค้อนหงอน", keywords: ["ค้อน", "ค้อนหงอน", "ค้อนตอกตะปู"], img: "https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=400&q=80" },
+            { name: "ออสซิลโลสโคป", keywords: ["ออสซิลโลสโคป", "สโคป"], img: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=400&q=80" },
+            { name: "เครื่องจ่ายไฟ", keywords: ["เครื่องจ่ายไฟ", "เพาเวอร์ซัพพลาย", "พาวเวอร์ซัพพลาย"], img: "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?auto=format&fit=crop&w=400&q=80" },
+            { name: "เทปพันสายไฟ", keywords: ["เทปพันสายไฟ", "เทปดำ"], img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80" }
         ];
 
         let currentQuestion = 0;
         let passCount = 0;
         let failCount = 0;
-        let totalAccuracySum = 0; // เก็บคะแนนเฉลี่ยความถูกต้องรวม
+        let totalAccuracySum = 0; 
 
-        let recognition;
+        let recognition = null;
         let countdownInterval;
         let timeLeft = 10;
         let isRunning = false;
+        let hasProcessed = false; // ตัวแปรป้องกันการประมวลผลซ้ำซ้อนใน 1 ข้อ
 
         window.onload = () => {
-            // 1. บังคับให้เปิดด้วย Google Chrome เท่านั้น
+            // บังคับเปิดด้วย Google Chrome เท่านั้น
             const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
             if (!isChrome) {
                 document.getElementById("chromeOverlay").style.display = "flex";
                 return;
             }
-
-            // 2. ตั้งค่าระบบตรวจจับเสียงจากไมโครโฟน
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert("เบราว์เซอร์ไม่เปิดสิทธิ์ระบบจดจำเสียง กรุณาตรวจสอบการตั้งค่าไมโครโฟน");
-                return;
-            }
-
-            recognition = new SpeechRecognition();
-            recognition.lang = 'th-TH'; // กำหนดให้ประมวลผลเป็นภาษาไทยอย่างชัดเจน
-            recognition.interimResults = false;
-            recognition.maxAlternatives = 1;
-
-            // เมื่อได้รับผลลัพธ์จากไมโครโฟน
-            recognition.onresult = function(event) {
-                if (!isRunning) return;
-                stopState();
-
-                const speechResult = event.results[0][0].transcript.trim();
-                document.getElementById("heardText").innerHTML = `📢 ได้ยินว่า: "${speechResult}"`;
-
-                // ตรวจหาคะแนนความใกล้เคียง
-                const matchResult = checkAnswer(speechResult, questions[currentQuestion].keywords);
-                const score = matchResult.score;
-
-                document.getElementById("score").innerHTML = score + "%";
-                totalAccuracySum += score;
-                document.getElementById("totalScore").innerHTML = Math.floor(totalAccuracySum / (currentQuestion + 1));
-
-                if (score >= 75) { // เกณฑ์การผ่านที่ 75% ความแม่นยำภาษา
-                    passCount++;
-                    document.getElementById("passCount").innerHTML = passCount;
-                    document.getElementById("status").innerHTML = "ผ่านแล้ว ✅";
-                    document.getElementById("status").className = "status pass";
-                    playPassSound();
-                } else {
-                    failCount++;
-                    document.getElementById("failCount").innerHTML = failCount;
-                    document.getElementById("status").innerHTML = "ไม่ผ่าน ❌";
-                    document.getElementById("status").className = "status fail";
-                    playFailSound();
-                }
-
-                disableMicButton(true);
-                setTimeout(() => {
-                    nextQuestion();
-                }, 2500);
-            };
-
-            // เมื่อไมค์มีปัญหาหรือหยุดพูดกระทันหัน
-            recognition.onerror = function(event) {
-                console.error("Recognition Error:", event.error);
-                if(event.error === 'no-speech') {
-                    handleTimeoutOrNoSpeech("ไม่มีเสียงพูด ⏰");
-                } else {
-                    stopState();
-                    document.getElementById("status").innerHTML = "ไมค์ขัดข้อง ❌";
-                    document.getElementById("status").className = "status fail";
-                    document.getElementById("heardText").innerHTML = "ไม่สามารถเชื่อมต่อไมค์ได้ กรุณากดลองอีกครั้ง";
-                }
-            };
-
-            // โหลดคำถามแรก
             loadQuestion(currentQuestion);
         };
 
@@ -618,9 +560,13 @@
             document.getElementById("status").className = "status";
             document.getElementById("heardText").innerHTML = "กดปุ่มเริ่มพูดเมื่อพร้อม...";
             document.getElementById("countdown").innerHTML = "10";
+            hasProcessed = false;
             disableMicButton(false);
         }
 
+        // =========================================================
+        // เริ่มต้นการฟังเสียง (ปรับปรุงโครงสร้างแบบยืดหยุ่นสูงสไตล์โปรโตไทป์ภาษาจีน)
+        // =========================================================
         function startRecognition() {
             const studentName = document.getElementById("studentName").value;
             if (studentName.trim() === "") {
@@ -631,44 +577,129 @@
 
             if (isRunning) return;
 
-            isRunning = true;
-            timeLeft = 10;
-            document.getElementById("countdown").innerHTML = timeLeft;
-            document.getElementById("status").innerHTML = "🎙️ AI กำลังฟัง...";
-            document.getElementById("status").className = "status";
-            document.getElementById("heardText").innerHTML = "กรุณาพูดชื่อเครื่องมือใน 10 วินาที...";
-            document.getElementById("cdWrapper").classList.add("active");
-            disableMicButton(true);
+            // เคลียร์ Instance เก่าทิ้งทุกครั้งที่กด เพื่อป้องกันปัญหาสายไมค์ของระบบปฏิบัติการมือถือค้าง
+            if (recognition) {
+                try { recognition.abort(); } catch(e) {}
+            }
 
-            try {
-                recognition.start();
-            } catch (err) {
-                console.log("Start Error:", err);
-                stopState();
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("เบราว์เซอร์ไม่รองรับระบบจำเสียงพูด");
                 return;
             }
 
-            // ตัวจับเวลาถอยหลัง 10 วินาที
+            // สร้าง Instance ใหม่เอี่ยมสำหรับรอบกดปัจจุบัน (Fresh Creation)
+            recognition = new SpeechRecognition();
+            recognition.lang = 'th-TH';
+            recognition.interimResults = false; 
+            recognition.maxAlternatives = 1;
+
+            isRunning = true;
+            disableMicButton(true);
+            document.getElementById("status").innerHTML = "🎙️ AI กำลังฟัง...";
+            document.getElementById("status").className = "status";
+            document.getElementById("heardText").innerHTML = "กรุณาพูดชื่อเครื่องมือในเวลานับถอยหลัง...";
+            document.getElementById("cdWrapper").classList.add("active");
+
+            // ผูกฟังก์ชันตรวจรับข้อมูลเมื่อ AI จับแพ็กเกจเสียงเสร็จสมบูรณ์
+            recognition.onresult = function(event) {
+                if (hasProcessed) return; 
+                stopState();
+
+                const speechResult = event.results[0][0].transcript.trim();
+                executeEvaluation(speechResult);
+            };
+
+            // แก้ไขปัญหาบั๊ก "ตึ๊-ดึ๊ด" (ไมค์ตัดการทำงานกระทันหันบนสมาร์ทโฟน)
+            recognition.onerror = function(event) {
+                console.error("Speech Error Log:", event.error);
+                
+                // หากเจอข้อผิดพลาดที่ไมค์ตัดตัวเองอัตโนมัติ (no-speech หรือ aborted) บนมือถือ 
+                if (event.error === 'no-speech' || event.error === 'aborted') {
+                    // ปลดล็อกระบบให้เด็กสามารถกดสิทธิ์ซ่อมเพื่อเริ่มพูดตอบใหม่ได้ โดยไม่ตัดเป็น 0% ทันที
+                    isRunning = false;
+                    clearInterval(countdownInterval);
+                    document.getElementById("cdWrapper").classList.remove("active");
+                    document.getElementById("status").innerHTML = "🔄 ระบบเปิดไมค์ไม่ทัน กรุณากดพูดใหม่อีกครั้งครับ";
+                    disableMicButton(false);
+                } else {
+                    // กรณีฮาร์ดแวร์ขัดข้องรุนแรงอื่น ๆ
+                    stopState();
+                    document.getElementById("status").innerHTML = "ไมค์ขัดข้อง ❌";
+                    document.getElementById("status").className = "status fail";
+                    document.getElementById("heardText").innerHTML = "ไม่สามารถเชื่อมต่อไมค์ได้ กรุณากดลองอีกครั้ง";
+                    disableMicButton(false);
+                }
+            };
+
+            // เริ่มสั่งไมโครโฟนทำงานระดับ Hardware
+            try {
+                recognition.start();
+            } catch (err) {
+                console.log("Hardware activation failed:", err);
+                isRunning = false;
+                disableMicButton(false);
+                return;
+            }
+
+            // ตัวนับเวลาถอยหลังประจำข้อ
+            timeLeft = 10;
+            document.getElementById("countdown").innerHTML = timeLeft;
             countdownInterval = setInterval(() => {
                 timeLeft--;
                 document.getElementById("countdown").innerHTML = timeLeft;
 
                 if (timeLeft <= 0) {
-                    handleTimeoutOrNoSpeech("หมดเวลา ⏰");
+                    handleAbsoluteTimeout();
                 }
             }, 1000);
         }
 
-        function handleTimeoutOrNoSpeech(msg) {
+        // ประมวลผลและคำนวณคะแนนอย่างแม่นยำ
+        function executeEvaluation(speechResult) {
+            hasProcessed = true;
+            document.getElementById("heardText").innerHTML = `📢 ได้ยินว่า: "${speechResult}"`;
+
+            const matchResult = checkAnswer(speechResult, questions[currentQuestion].keywords);
+            const score = matchResult.score;
+
+            document.getElementById("score").innerHTML = score + "%";
+            totalAccuracySum += score;
+            document.getElementById("totalScore").innerHTML = Math.floor(totalAccuracySum / (currentQuestion + 1));
+
+            if (score >= 75) { 
+                passCount++;
+                document.getElementById("passCount").innerHTML = passCount;
+                document.getElementById("status").innerHTML = "ผ่านแล้ว ✅";
+                document.getElementById("status").className = "status pass";
+                playPassSound();
+            } else {
+                failCount++;
+                document.getElementById("failCount").innerHTML = failCount;
+                document.getElementById("status").innerHTML = "ไม่ผ่าน ❌";
+                document.getElementById("status").className = "status fail";
+                playFailSound();
+            }
+
+            disableMicButton(true);
+            setTimeout(() => {
+                nextQuestion();
+            }, 2500);
+        }
+
+        // จัดการกรณีเวลาหมด 10 วินาทีจริงๆ โดยที่ไม่มีเสียงพูดเข้ามาเลย
+        function handleAbsoluteTimeout() {
             stopState();
+            if (hasProcessed) return;
+            hasProcessed = true;
+
             failCount++;
             document.getElementById("failCount").innerHTML = failCount;
-            document.getElementById("status").innerHTML = msg;
+            document.getElementById("status").innerHTML = "หมดเวลา ⏰";
             document.getElementById("status").className = "status fail";
             document.getElementById("heardText").innerHTML = "ระบบข้ามไปยังข้อถัดไป";
             document.getElementById("score").innerHTML = "0%";
             
-            // อัปเดตคะแนนเฉลี่ยรวมสะสมแม้ได้ 0
             document.getElementById("totalScore").innerHTML = Math.floor(totalAccuracySum / (currentQuestion + 1));
             
             playFailSound();
@@ -683,7 +714,9 @@
             isRunning = false;
             clearInterval(countdownInterval);
             document.getElementById("cdWrapper").classList.remove("active");
-            try { recognition.stop(); } catch (e) {}
+            if (recognition) {
+                try { recognition.stop(); } catch (e) {}
+            }
         }
 
         function nextQuestion() {
@@ -693,7 +726,7 @@
                 saveScoreToGoogleSheet(finalAvgScore);
                 alert(`🎉 จบทดสอบเรียบร้อยแล้ว!\nคะแนนความถูกต้องเฉลี่ย: ${finalAvgScore}%\nผ่าน: ${passCount} ข้อ | ตก: ${failCount} ข้อ`);
                 
-                // รีเซ็ตเพื่อเริ่มรอบใหม่
+                // รีเซ็ตเพื่อตั้งค่าเข้าสอบรอบใหม่
                 currentQuestion = 0;
                 passCount = 0;
                 failCount = 0;
@@ -706,20 +739,20 @@
             loadQuestion(currentQuestion);
         }
 
-        // อัลกอริทึมจัดการเปรียบเทียบคำหลักภาษาไทย
+        // อัลกอริทึมเปรียบเทียบคำหลักภาษาไทยที่มีความละเอียดสูงและแม่นยำสูงสุด
         function checkAnswer(userSpeech, keywords) {
             let maxScore = 0;
-            // ทำความสะอาดข้อความลบสเปซและสัญลักษณ์พิเศษออกจากเสียงนักเรียน
-            const cleanUser = userSpeech.replace(/[\s\s.]/g, "");
+            // ทำความสะอาดข้อความ ลบช่องว่างและสัญลักษณ์พิเศษออกก่อนตรวจเช็คเพื่อความเที่ยงตรง
+            const cleanUser = userSpeech.replace(/[\s\s.ๆ,!?_\-]/g, "");
 
             for (let word of keywords) {
-                const cleanWord = word.replace(/[\s\s.]/g, "");
+                const cleanWord = word.replace(/[\s\s.ๆ,!?_\-]/g, "");
                 
                 if (cleanUser === cleanWord) {
                     return { score: 100 };
                 }
                 
-                // ค้นหาคำย่อยใกล้เคียง
+                // ค้นหาโครงสร้างคำย่อยใกล้เคียงเพื่อสกัดคะแนนตามอัตราส่วนความยาว
                 if (cleanUser.includes(cleanWord) || cleanWord.includes(cleanUser)) {
                     let score = Math.floor((Math.min(cleanUser.length, cleanWord.length) / Math.max(cleanUser.length, cleanWord.length)) * 100);
                     if(score > maxScore) maxScore = score;
@@ -732,40 +765,32 @@
             document.getElementById("micBtn").disabled = status;
         }
 
-        // =========================================================
-        // ฟังก์ชันส่งข้อมูลผลการทดสอบไปยัง Google Sheet (เวอร์ชันอัปเดตใช้ FormData)
-        // =========================================================
+        // ฟังก์ชันส่งข้อมูลไปยังฐานข้อมูล Google Sheet แบบประมวลผลเร็ว
         function saveScoreToGoogleSheet(finalScore) {
             const studentName = document.getElementById("studentName").value;
 
-            // ตรวจสอบว่ามีชื่อผู้เรียนและ URL ระบบปลายทางหรือไม่
             if (!SCRIPT_URL || SCRIPT_URL.includes("เปลี่ยนเป็น_URL")) {
-                console.warn("⚠️ ยังไม่ได้กำหนด SCRIPT_URL หรือ URL ไม่ถูกต้อง ข้อมูลจะไม่ถูกบันทึก");
+                console.warn("⚠️ ลิงก์ SCRIPT_URL ปลายทางไม่ถูกต้อง");
                 return;
             }
 
-            // ใช้ ออบเจกต์ FormData เพื่อส่งข้อมูล
             const formData = new FormData();
             formData.append("name", studentName);
             formData.append("score", finalScore); 
             formData.append("pass", passCount);
             formData.append("fail", failCount);
 
-            console.log("🚀 กำลังส่งข้อมูลไปยัง Google Sheet...", studentName);
-
-            // ส่งข้อมูลผ่าน Fetch API พร้อมเปิดโหมด ทะลุข้อจำกัด CORS (no-cors)
             fetch(SCRIPT_URL, {
                 method: "POST",
                 mode: "no-cors", 
                 body: formData
             })
             .then(() => {
-                console.log("✅ บันทึกข้อมูลลง Google Sheet เรียบร้อยแล้ว (Data packet dispatched)");
+                console.log("✅บันทึกผลคะแนนเสร็จสมบูรณ์");
                 document.getElementById("heardText").innerHTML = "📊 บันทึกคะแนนลงระบบฐานข้อมูลสำเร็จแล้ว!";
             })
             .catch(error => {
-                console.error("❌ เกิดข้อผิดพลาดในระบบส่งข้อมูล:", error);
-                document.getElementById("heardText").innerHTML = "❌ ไม่สามารถบันทึกคะแนนได้ กรุณาตรวจสอบอินเทอร์เน็ต";
+                console.error("❌ Error writing log:", error);
             });
         }
 
