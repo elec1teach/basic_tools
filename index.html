@@ -350,14 +350,12 @@
         let failCount = 0;
         let totalAccuracySum = 0; 
 
-        // สร้างตัวแปร recognition ไว้ด้านนอก เพื่อไม่ให้สร้างซ้ำซ้อนจนเบราว์เซอร์สับสน
         let recognition = null;
         let countdownInterval;
         let timeLeft = 10;
         let isRunning = false;
         let hasProcessed = false;
 
-        // การตั้งค่าเริ่มต้นของระบบ AI เสียง
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
@@ -365,27 +363,24 @@
             recognition.interimResults = false; 
             recognition.maxAlternatives = 1;
 
-            // เมื่อได้ผลลัพธ์
             recognition.onresult = function(event) {
                 if (hasProcessed) return; 
-                stopState(false); // ปิดไมค์แต่ไม่หยุดเวลาเผื่อต้องประมวลผล
+                stopState(true); // ปิดไมค์และหยุดเวลาทันทีเมื่อได้ผลลัพธ์
                 const speechResult = event.results[0][0].transcript.trim();
                 executeEvaluation(speechResult);
             };
 
-            // เมื่อเกิดข้อผิดพลาด
             recognition.onerror = function(event) {
                 console.error("Speech Error Log:", event.error);
                 
-                // หากจับเสียงไม่ได้ หรือผู้ใช้เงียบไป
                 if (event.error === 'no-speech') {
-                    // อนุญาตให้กดพูดใหม่ได้จนกว่าจะหมดเวลา 10 วินาที
-                    stopState(false); 
+                    // แตกต่างจากเดิม: ส่ง stopState(true) เพื่อหยุดเวลา เพื่อให้ผู้สอบกดเริ่มจับเวลา 10 วิใหม่ได้
+                    stopState(true); 
                     document.getElementById("status").innerHTML = "จับเสียงไม่ได้ ลองกดพูดใหม่นะครับ";
                     document.getElementById("heardText").innerHTML = "ระบบไม่ได้ยินเสียง กรุณากดปุ่มอีกครั้ง";
                     disableMicButton(false);
                 } else if (event.error === 'aborted') {
-                    stopState(false);
+                    stopState(true);
                     disableMicButton(false);
                 } else {
                     stopState(true);
@@ -396,9 +391,9 @@
                 }
             };
 
-            // เมื่อไมค์หยุดทำงาน (อาจจะหยุดเองเมื่อพูดจบ)
             recognition.onend = function() {
                 if (!hasProcessed && isRunning) {
+                    stopState(true); // หยุดเวลาด้วยหากเสียงขาดหาย
                     disableMicButton(false);
                     document.getElementById("status").innerHTML = "เสียงขาดหาย กดพูดใหม่นะครับ";
                     isRunning = false;
@@ -423,7 +418,6 @@
             document.getElementById("status").className = "status";
             document.getElementById("heardText").innerHTML = "กดปุ่มเริ่มพูดเมื่อพร้อม...";
             
-            // รีเซ็ตเวลาและสถานะ
             timeLeft = 10;
             document.getElementById("countdown").innerHTML = timeLeft;
             hasProcessed = false;
@@ -459,27 +453,27 @@
             try {
                 recognition.start();
             } catch (err) {
-                console.log("Hardware activation failed (อาจจะทำงานอยู่แล้ว):", err);
-                // ข้าม error ไปก่อนถ้าสถานะชนกัน
+                console.log("Hardware activation failed:", err);
             }
 
-            // จัดการเวลา 10 วินาทีต่อข้อ (เดินต่อเนื่องแม้ไมค์จะดับไปกลางทาง)
-            if (timeLeft === 10) {
-                clearInterval(countdownInterval);
-                countdownInterval = setInterval(() => {
-                    timeLeft--;
-                    document.getElementById("countdown").innerHTML = timeLeft;
+            // การเปลี่ยนแปลงหลัก: รีเซ็ตเวลา 10 วินาทีใหม่เสมอทุกครั้งที่กดเริ่ม
+            timeLeft = 10;
+            document.getElementById("countdown").innerHTML = timeLeft;
+            
+            clearInterval(countdownInterval); // ล้างเวลาเก่าก่อนเริ่มใหม่
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById("countdown").innerHTML = timeLeft;
 
-                    if (timeLeft <= 0) {
-                        handleAbsoluteTimeout();
-                    }
-                }, 1000);
-            }
+                if (timeLeft <= 0) {
+                    handleAbsoluteTimeout();
+                }
+            }, 1000);
         }
 
         function executeEvaluation(speechResult) {
             hasProcessed = true;
-            clearInterval(countdownInterval); // หยุดเวลา
+            clearInterval(countdownInterval); 
             document.getElementById("heardText").innerHTML = `📢 ได้ยินว่า: "${speechResult}"`;
 
             const matchResult = checkAnswer(speechResult, questions[currentQuestion].keywords);
@@ -527,7 +521,6 @@
             setTimeout(() => { nextQuestion(); }, 2500);
         }
 
-        // stopTimer = true คือหยุดเวลานับถอยหลังด้วย (ใช้ตอนจบข้อ), false คือปล่อยเวลาเดินต่อ (ใช้ตอนไมค์หลุดให้กดใหม่)
         function stopState(stopTimer = true) {
             isRunning = false;
             if (stopTimer) {
