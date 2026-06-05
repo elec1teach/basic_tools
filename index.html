@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ระบบทดสอบเครื่องมือไฟฟ้าและอิเล็กทรอนิกส์ด้วย AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Prompt:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg1: #050b14;
+            --bg2: #101626;
+            --panel: rgba(16, 22, 42, 0.75);
+            --line: rgba(53, 216, 255, 0.15);
+            --cyan: #00f0ff;
+            --blue: #3a7bd5;
+            --violet: #8a2be2;
+            --green: #00ff87;
+            --red: #ff3366;
+            --text: #f0f4f8;
+            --muted: #a0aec0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Prompt', sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.15), transparent 30%),
+                radial-gradient(circle at 90% 10%, rgba(138, 43, 226, 0.12), transparent 30%),
+                linear-gradient(to bottom, var(--bg1), var(--bg2));
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.3;
+        }
+
+        /* Chrome Only Overlay Lock */
+        #chromeOverlay {
+            position: fixed;
+            inset: 0;
+            background: #060913;
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            text-align: center;
+        }
+        .chrome-card {
+            background: rgba(255, 33, 102, 0.1);
+            border: 2px solid var(--red);
+            padding: 40px;
+            border-radius: 24px;
+            max-width: 500px;
+            box-shadow: 0 0 50px rgba(255, 51, 102, 0.2);
+        }
+        .chrome-card h2 { color: var(--red); margin-top: 0; font-size: 28px; }
+        .chrome-card p { font-size: 18px; line-height: 1.6; color: var(--text); }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(50px);
+            opacity: 0.2;
+            pointer-events: none;
+            animation: float 10s ease-in-out infinite;
+        }
+        .orb1 { width: 250px; height: 250px; background: var(--cyan); top: 10%; left: -5%; }
+        .orb2 { width: 300px; height: 300px; background: var(--violet); top: 40%; right: -5%; animation-delay: -3s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .glass {
+            background: rgba(16, 22, 42, 0.65);
+            border: 1px solid var(--line);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .header {
+            padding: 25px;
+            border-radius: 24px;
+            margin-bottom: 20px;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .logo {
+            width: 65px;
+            height: 65px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 26px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            color: #050b14;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+
+        .subtitle {
+            margin-top: 5px;
+            font-size: 15px;
+            color: var(--muted);
+        }
+
+        .live {
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: rgba(0, 255, 135, 0.08);
+            border: 1px solid rgba(0, 255, 135, 0.25);
+            color: #bdffde;
+            font-weight: bold;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .live::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 10px var(--green);
+        }
+
+        .login-box {
+            margin-bottom: 20px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            background: rgba(10, 15, 30, 0.8);
+            color: white;
+            font-size: 18px;
+            outline: none;
+            transition: 0.3s;
+            text-align: center;
+        }
+
+        .login-box input:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .top-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            padding: 15px;
+            border-radius: 18px;
+            text-align: center;
+            border-bottom: 4px solid var(--blue);
+        }
+
+        .stat-title {
+            font-size: 13px;
+            color: var(--muted);
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            margin-top: 5px;
+            font-size: 28px;
+            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            gap: 20px;
+        }
+
+        .sentence-box {
+            padding: 30px;
+            border-radius: 24px;
+            text-align: center;
+        }
+
+        .question-number {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 13px;
+            color: var(--cyan);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+        }
+
+        /* พื้นที่แสดงรูปภาพเครื่องมือ */
+        .tool-image-container {
+            width: 100%;
+            max-width: 320px;
+            height: 220px;
+            margin: 20px auto;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--line);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+        }
+
+        .tool-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: 0.3s ease;
+        }
+
+        .instruction-text {
+            font-size: 18px;
+            color: var(--text);
+            margin: 15px 0;
+            font-weight: 500;
+        }
+
+        .countdown-wrapper {
+            margin: 20px auto 15px;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(#101626, #050b14);
+            border: 4px solid var(--line);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+        }
+
+        .countdown-wrapper.active {
+            border-color: var(--cyan);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
+            animation: pulse 1s infinite alternate;
+        }
+
+        .countdown {
+            font-size: 38px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--cyan);
+        }
+
+        @keyframes pulse {
+            100% { transform: scale(1.05); }
+        }
+
+        .controls {
+            margin-top: 15px;
+        }
+
+        button {
+            border: none;
+            padding: 16px 30px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: 0.2s ease-in-out;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            color: #050b14;
+            box-shadow: 0 8px 25px rgba(0, 240, 255, 0.3);
+            width: 100%;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 240, 255, 0.4);
+        }
+
+        .start-btn:disabled {
+            background: #2d3748;
+            color: #718096;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-box {
+            padding: 30px;
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .score {
+            font-size: 64px;
+            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, #fff, var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status {
+            margin-top: 10px;
+            font-size: 26px;
+            font-weight: bold;
+            color: var(--muted);
+        }
+
+        .pass { color: var(--green); text-shadow: 0 0 15px rgba(0, 255, 135, 0.3); }
+        .fail { color: var(--red); text-shadow: 0 0 15px rgba(255, 51, 109, 0.3); }
+
+        .heard-text {
+            margin-top: 15px;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #c0d0ed;
+            font-size: 16px;
+            min-height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .teacher-box {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 18px;
+            text-align: center;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .teacher-title {
+            font-weight: bold;
+            color: var(--cyan);
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        @media(max-width:850px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .top-bar { gap: 10px; }
+            .stat-value { font-size: 22px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="chromeOverlay">
+        <div class="chrome-card">
+            <h2>🚨 โปรดใช้ Google Chrome เท่านั้น</h2>
+            <p>ระบบแยกแยะเสียงและปัญญาประดิษฐ์ (Speech Recognition AI) ได้รับการออกแบบมาให้ทำงานเต็มประสิทธิภาพบนระบบจำเสียงของ <b>Google Chrome</b> เท่านั้น เพื่อป้องกันความผิดพลาดในการประเมินผลข้อสอบ กรุณาเปิดลิงก์นี้ผ่าน Google Chrome ครับ</p>
+        </div>
+    </div>
+
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+
+    <div class="container">
+
+        <div class="header glass">
+            <div class="top-header">
+                <div class="logo-area">
+                    <div class="logo">EE</div>
+                    <div>
+                        <h1>แบบทดสอบเครื่องมือวัดไฟฟ้าและอิเล็กทรอนิกส์</h1>
+                        <div class="subtitle">ระบบทดสอบการรับฟังเสียงพูดของนักเรียนแบบReal-Time</div>
+                    </div>
+                </div>
+                <div class="live">AI ENGINE ONLINE</div>
+            </div>
+        </div>
+
+        <div class="login-box">
+            <input type="text" id="studentName" placeholder="👉 กรุณากรอกชื่อ-นามสกุลของผู้เข้าทดสอบก่อนเริ่ม 👈" />
+        </div>
+
+        <div class="top-bar">
+            <div class="stat glass">
+                <div class="stat-title">SCORE (ACCURACY)</div>
+                <div class="stat-value"><span id="totalScore">0</span>%</div>
+            </div>
+            <div class="stat glass">
+                <div class="stat-title">PASS (ผ่าน)</div>
+                <div class="stat-value" style="color: var(--green);"><span id="passCount">0</span></div>
+            </div>
+            <div class="stat glass">
+                <div class="stat-title">FAIL (ไม่ผ่าน)</div>
+                <div class="stat-value" style="color: var(--red);"><span id="failCount">0</span></div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="sentence-box glass">
+                <div class="question-number" id="questionNumber">ข้อที่ 1 / 10</div>
+                
+                <div class="tool-image-container">
+                    <img src="" id="toolImg" class="tool-image" alt="ภาพเครื่องมือไฟฟ้า">
+                </div>
+
+                <div class="instruction-text">จงพูดชื่อเครื่องมือชิ้นนี้ให้ถูกต้องเป็นภาษาไทย</div>
+
+                <div class="countdown-wrapper" id="cdWrapper">
+                    <div class="countdown" id="countdown">10</div>
+                </div>
+                
+                <div class="controls">
+                    <button class="start-btn" id="micBtn" onclick="startRecognition()">🎤 กดเพื่อเริ่มพูดตอบ</button>
+                </div>
+            </div>
+
+            <div class="result-box glass">
+                <div class="score" id="score">0%</div>
+                <div class="status" id="status">รอเริ่มทดสอบ</div>
+                <div class="heard-text" id="heardText">กดปุ่มเริ่มพูดเมื่อพร้อม...</div>
+            </div>
+        </div>
+
+        <div class="teacher-box glass">
+            <div class="teacher-title">ผู้พัฒนาโครงการ</div>
+            แผนกวิชาช่างไฟฟ้าและอิเล็กทรอนิกส์<br>
+            วิทยาลัยสารพัดช่างศรีสะเกษ
+        </div>
+
+        <div class="footer">Electrical Tool AI Recognition Station © 2026</div>
+
+    </div>
+
+    <script>
+        // =========================================================
+        // CONFIGURATION: วาง URL ของ Google Apps Script Web App ของคุณที่นี่
+        // =========================================================
+        const SCRIPT_URL = "https://script.google.com/macros/s/xxxxxxxxx/exec";
+
+        // =========================================================
+        // DATA SET: รายการข้อสอบ 10 ข้อ (ชื่อเครื่องมือ, คำหลักที่ใช้ตรวจ, และ URL รูปภาพ)
+        // =========================================================
+        const questions = [
+            { name: "มัลติมิเตอร์", keywords: ["มัลติมิเตอร์", "มัลติมิเตอร์ดิจิตอล", "มัลติมิเตอร์แบบเข็ม"], img: "https://images.unsplash.com/photo-1601524909162-be87252be298?auto=format&fit=crop&w=400&q=80" },
+            { name: "หัวแร้งบัดกรี", keywords: ["หัวแร้ง", "หัวแร้งบัดกรี", "หัวแร้งแช่", "หัวแร้งปืน"], img: "https://images.unsplash.com/photo-1558449028-b53a39d100fc?auto=format&fit=crop&w=400&q=80" },
+            { name: "คีมตัดสายไฟ", keywords: ["คีมตัด", "คีมตัดสายไฟ", "คีมปากเฉียง"], img: "https://images.unsplash.com/photo-1540240941121-a20ef10be951?auto=format&fit=crop&w=400&q=80" },
+            { name: "คีมปอกสายไฟ", keywords: ["คีมปอกสายไฟ", "คีมปอก"], img: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80" },
+            { name: "ไขควงวัดไฟ", keywords: ["ไขควงวัดไฟ", "ไขควงลองไฟ", "ไขควงเช็คไฟ"], img: "https://images.unsplash.com/photo-1621905252507-b354bc25edac?auto=format&fit=crop&w=400&q=80" },
+            { name: "สว่านไฟฟ้า", keywords: ["สว่าน", "สว่านไฟฟ้า", "สว่านแบต"], img: "https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=400&q=80" },
+            { name: "ค้อนหงอน", keywords: ["ค้อน", "ค้อนหงอน", "ค้อนตอกตะปู"], img: "https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=400&q=80" },
+            { name: "ออสซิลโลสโคป", keywords: ["ออสซิลโลสโคป", "สโคป"], img: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=400&q=80" },
+            { name: "เครื่องจ่ายไฟ", keywords: ["เครื่องจ่ายไฟ", "เพาเวอร์ซัพพลาย", "พาวเวอร์ซัพพลาย"], img: "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?auto=format&fit=crop&w=400&q=80" },
+            { name: "เทปพันสายไฟ", keywords: ["เทปพันสายไฟ", "เทปดำ"], img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80" }
+        ];
+
+        let currentQuestion = 0;
+        let passCount = 0;
+        let failCount = 0;
+        let totalAccuracySum = 0; // เก็บคะแนนเฉลี่ยความถูกต้องรวม
+
+        let recognition;
+        let countdownInterval;
+        let timeLeft = 10;
+        let isRunning = false;
+
+        window.onload = () => {
+            // 1. บังคับให้เปิดด้วย Google Chrome เท่านั้น
+            const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+            if (!isChrome) {
+                document.getElementById("chromeOverlay").style.display = "flex";
+                return;
+            }
+
+            // 2. ตั้งค่าระบบตรวจจับเสียงจากไมโครโฟน
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("เบราว์เซอร์ไม่เปิดสิทธิ์ระบบจดจำเสียง กรุณาตรวจสอบการตั้งค่าไมโครโฟน");
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.lang = 'th-TH'; // กำหนดให้ประมวลผลเป็นภาษาไทยอย่างชัดเจน
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            // เมื่อได้รับผลลัพธ์จากไมโครโฟน
+            recognition.onresult = function(event) {
+                if (!isRunning) return;
+                stopState();
+
+                const speechResult = event.results[0][0].transcript.trim();
+                document.getElementById("heardText").innerHTML = `📢 ได้ยินว่า: "${speechResult}"`;
+
+                // ตรวจหาคะแนนความใกล้เคียง
+                const matchResult = checkAnswer(speechResult, questions[currentQuestion].keywords);
+                const score = matchResult.score;
+
+                document.getElementById("score").innerHTML = score + "%";
+                totalAccuracySum += score;
+                document.getElementById("totalScore").innerHTML = Math.floor(totalAccuracySum / (currentQuestion + 1));
+
+                if (score >= 75) { // เกณฑ์การผ่านที่ 75% ความแม่นยำภาษา
+                    passCount++;
+                    document.getElementById("passCount").innerHTML = passCount;
+                    document.getElementById("status").innerHTML = "ผ่านแล้ว ✅";
+                    document.getElementById("status").className = "status pass";
+                    playPassSound();
+                } else {
+                    failCount++;
+                    document.getElementById("failCount").innerHTML = failCount;
+                    document.getElementById("status").innerHTML = "ไม่ผ่าน ❌";
+                    document.getElementById("status").className = "status fail";
+                    playFailSound();
+                }
+
+                disableMicButton(true);
+                setTimeout(() => {
+                    nextQuestion();
+                }, 2500);
+            };
+
+            // เมื่อไมค์มีปัญหาหรือหยุดพูดกระทันหัน
+            recognition.onerror = function(event) {
+                console.error("Recognition Error:", event.error);
+                if(event.error === 'no-speech') {
+                    handleTimeoutOrNoSpeech("ไม่มีเสียงพูด ⏰");
+                } else {
+                    stopState();
+                    document.getElementById("status").innerHTML = "ไมค์ขัดข้อง ❌";
+                    document.getElementById("status").className = "status fail";
+                    document.getElementById("heardText").innerHTML = "ไม่สามารถเชื่อมต่อไมค์ได้ กรุณากดลองอีกครั้ง";
+                }
+            };
+
+            // โหลดคำถามแรก
+            loadQuestion(currentQuestion);
+        };
+
+        function loadQuestion(index) {
+            document.getElementById("questionNumber").innerHTML = `ข้อที่ ${index + 1} / 10`;
+            document.getElementById("toolImg").src = questions[index].img;
+            document.getElementById("score").innerHTML = "0%";
+            document.getElementById("status").innerHTML = "รอเริ่มทดสอบ";
+            document.getElementById("status").className = "status";
+            document.getElementById("heardText").innerHTML = "กดปุ่มเริ่มพูดเมื่อพร้อม...";
+            document.getElementById("countdown").innerHTML = "10";
+            disableMicButton(false);
+        }
+
+        function startRecognition() {
+            const studentName = document.getElementById("studentName").value;
+            if (studentName.trim() === "") {
+                alert("⚠️ กรุณากรอกชื่อผู้เข้าทดสอบก่อนเริ่มระบุเสียงพูดครับ");
+                document.getElementById("studentName").focus();
+                return;
+            }
+
+            if (isRunning) return;
+
+            isRunning = true;
+            timeLeft = 10;
+            document.getElementById("countdown").innerHTML = timeLeft;
+            document.getElementById("status").innerHTML = "🎙️ AI กำลังฟัง...";
+            document.getElementById("status").className = "status";
+            document.getElementById("heardText").innerHTML = "กรุณาพูดชื่อเครื่องมือใน 10 วินาที...";
+            document.getElementById("cdWrapper").classList.add("active");
+            disableMicButton(true);
+
+            try {
+                recognition.start();
+            } catch (err) {
+                console.log("Start Error:", err);
+                stopState();
+                return;
+            }
+
+            // ตัวจับเวลาถอยหลัง 10 วินาที
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById("countdown").innerHTML = timeLeft;
+
+                if (timeLeft <= 0) {
+                    handleTimeoutOrNoSpeech("หมดเวลา ⏰");
+                }
+            }, 1000);
+        }
+
+        function handleTimeoutOrNoSpeech(msg) {
+            stopState();
+            failCount++;
+            document.getElementById("failCount").innerHTML = failCount;
+            document.getElementById("status").innerHTML = msg;
+            document.getElementById("status").className = "status fail";
+            document.getElementById("heardText").innerHTML = "ระบบข้ามไปยังข้อถัดไป";
+            document.getElementById("score").innerHTML = "0%";
+            
+            // อัปเดตคะแนนเฉลี่ยรวมสะสมแม้ได้ 0
+            document.getElementById("totalScore").innerHTML = Math.floor(totalAccuracySum / (currentQuestion + 1));
+            
+            playFailSound();
+            disableMicButton(true);
+
+            setTimeout(() => {
+                nextQuestion();
+            }, 2500);
+        }
+
+        function stopState() {
+            isRunning = false;
+            clearInterval(countdownInterval);
+            document.getElementById("cdWrapper").classList.remove("active");
+            try { recognition.stop(); } catch (e) {}
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion >= questions.length) {
+                const finalAvgScore = Math.floor(totalAccuracySum / questions.length);
+                saveScoreToGoogleSheet(finalAvgScore);
+                alert(`🎉 จบทดสอบเรียบร้อยแล้ว!\nคะแนนความถูกต้องเฉลี่ย: ${finalAvgScore}%\nผ่าน: ${passCount} ข้อ | ตก: ${failCount} ข้อ`);
+                
+                // รีเซ็ตเพื่อเริ่มรอบใหม่
+                currentQuestion = 0;
+                passCount = 0;
+                failCount = 0;
+                totalAccuracySum = 0;
+                document.getElementById("totalScore").innerHTML = "0";
+                document.getElementById("passCount").innerHTML = "0";
+                document.getElementById("failCount").innerHTML = "0";
+                document.getElementById("studentName").value = "";
+            }
+            loadQuestion(currentQuestion);
+        }
+
+        // อัลกอริทึมจัดการเปรียบเทียบคำหลักภาษาไทย
+        function checkAnswer(userSpeech, keywords) {
+            let maxScore = 0;
+            // ทำความสะอาดข้อความลบสเปซและสัญลักษณ์พิเศษออกจากเสียงนักเรียน
+            const cleanUser = userSpeech.replace(/[\s\s.]/g, "");
+
+            for (let word of keywords) {
+                const cleanWord = word.replace(/[\s\s.]/g, "");
+                
+                if (cleanUser === cleanWord) {
+                    return { score: 100 };
+                }
+                
+                // ค้นหาคำย่อยใกล้เคียง
+                if (cleanUser.includes(cleanWord) || cleanWord.includes(cleanUser)) {
+                    let score = Math.floor((Math.min(cleanUser.length, cleanWord.length) / Math.max(cleanUser.length, cleanWord.length)) * 100);
+                    if(score > maxScore) maxScore = score;
+                }
+            }
+            return { score: maxScore };
+        }
+
+        function disableMicButton(status) {
+            document.getElementById("micBtn").disabled = status;
+        }
+
+        function saveScoreToGoogleSheet(finalScore) {
+            const studentName = document.getElementById("studentName").value;
+
+            const formData = new URLSearchParams();
+            formData.append("name", studentName);
+            formData.append("score", finalScore); // ส่งคะแนนเฉลี่ยไปบันทึก
+            formData.append("pass", passCount);
+            formData.append("fail", failCount);
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors", 
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: formData.toString()
+            })
+            .then(() => console.log("Data packet sent to Google Sheets backend successfully."))
+            .catch(error => console.error("Error writing log:", error));
+        }
+
+        function playPassSound() {
+            const audio = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
+            audio.play().catch(e => console.log(e));
+        }
+
+        function playFailSound() {
+            const audio = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
+            audio.play().catch(e => console.log(e));
+        }
+    </script>
+</body>
+</html>
