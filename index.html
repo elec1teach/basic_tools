@@ -51,7 +51,6 @@
             opacity: 0.3;
         }
 
-        /* Chrome Only Overlay Lock */
         #chromeOverlay {
             position: fixed;
             inset: 0;
@@ -325,7 +324,7 @@
     </div>
 
     <script>
-        // ตรวจสอบความปลอดภัย HTTPS เบื้องต้น (API เสียงจำเป็นต้องใช้ HTTPS)
+        // ตรวจสอบความปลอดภัย HTTPS เบื้องต้น
         if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
             alert("⚠️ ข้อควรระวัง: ระบบรู้จำเสียงของเบราว์เซอร์บังคับให้เว็บไซต์ต้องมี 'https://' เท่านั้น ไม่เช่นนั้นไมโครโฟนจะถูกบล็อก กรุณาอัปโหลดโค้ดขึ้น Server หรือ GitHub Pages ก่อนทดสอบใช้งานจริงครับ");
         }
@@ -355,6 +354,18 @@
         let timeLeft = 10;
         let isRunning = false;
         let hasProcessed = false;
+        
+        // เพิ่มตัวแปรสำหรับจัดการเสียงที่กำลังเล่นอยู่
+        let currentAudio = null;
+
+        // ฟังก์ชันสำหรับตัดเสียงทั้งหมด
+        function stopAllAudio() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+            }
+        }
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
@@ -365,7 +376,7 @@
 
             recognition.onresult = function(event) {
                 if (hasProcessed) return; 
-                stopState(true); // ปิดไมค์และหยุดเวลาทันทีเมื่อได้ผลลัพธ์
+                stopState(true);
                 const speechResult = event.results[0][0].transcript.trim();
                 executeEvaluation(speechResult);
             };
@@ -374,7 +385,6 @@
                 console.error("Speech Error Log:", event.error);
                 
                 if (event.error === 'no-speech') {
-                    // แตกต่างจากเดิม: ส่ง stopState(true) เพื่อหยุดเวลา เพื่อให้ผู้สอบกดเริ่มจับเวลา 10 วิใหม่ได้
                     stopState(true); 
                     document.getElementById("status").innerHTML = "จับเสียงไม่ได้ ลองกดพูดใหม่นะครับ";
                     document.getElementById("heardText").innerHTML = "ระบบไม่ได้ยินเสียง กรุณากดปุ่มอีกครั้ง";
@@ -393,7 +403,7 @@
 
             recognition.onend = function() {
                 if (!hasProcessed && isRunning) {
-                    stopState(true); // หยุดเวลาด้วยหากเสียงขาดหาย
+                    stopState(true);
                     disableMicButton(false);
                     document.getElementById("status").innerHTML = "เสียงขาดหาย กดพูดใหม่นะครับ";
                     isRunning = false;
@@ -443,6 +453,9 @@
 
             if (isRunning) return;
 
+            // สั่งหยุดเสียงทั้งหมดทันทีก่อนเริ่มฟังเสียงใหม่ เพื่อป้องกันเสียงสะท้อนเข้าไมค์
+            stopAllAudio();
+
             isRunning = true;
             disableMicButton(true);
             document.getElementById("status").innerHTML = "🎙️ AI กำลังฟัง...";
@@ -456,11 +469,10 @@
                 console.log("Hardware activation failed:", err);
             }
 
-            // การเปลี่ยนแปลงหลัก: รีเซ็ตเวลา 10 วินาทีใหม่เสมอทุกครั้งที่กดเริ่ม
             timeLeft = 10;
             document.getElementById("countdown").innerHTML = timeLeft;
             
-            clearInterval(countdownInterval); // ล้างเวลาเก่าก่อนเริ่มใหม่
+            clearInterval(countdownInterval);
             countdownInterval = setInterval(() => {
                 timeLeft--;
                 document.getElementById("countdown").innerHTML = timeLeft;
@@ -602,14 +614,17 @@
             });
         }
 
+        // ปรับปรุงฟังก์ชันเล่นเสียงให้ใช้ผ่านตัวแปร currentAudio เพื่อให้สั่งหยุดได้
         function playPassSound() {
-            const audio = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
-            audio.play().catch(e => console.log(e));
+            stopAllAudio(); // เผื่อความปลอดภัย สั่งหยุดเสียงเดิมก่อน
+            currentAudio = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
+            currentAudio.play().catch(e => console.log(e));
         }
 
         function playFailSound() {
-            const audio = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
-            audio.play().catch(e => console.log(e));
+            stopAllAudio(); // เผื่อความปลอดภัย สั่งหยุดเสียงเดิมก่อน
+            currentAudio = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
+            currentAudio.play().catch(e => console.log(e));
         }
     </script>
 </body>
