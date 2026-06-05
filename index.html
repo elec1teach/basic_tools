@@ -90,12 +90,7 @@
             50% { transform: translateY(-30px) scale(1.05); }
         }
 
-        .container {
-            max-width: 1100px;
-            margin: auto;
-            position: relative;
-            z-index: 1;
-        }
+        .container { max-width: 1100px; margin: auto; position: relative; z-index: 1; }
 
         .glass {
             background: rgba(16, 22, 42, 0.65);
@@ -106,11 +101,8 @@
         }
 
         .header { padding: 25px; border-radius: 24px; margin-bottom: 20px; }
-
         .top-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
-
         .logo-area { display: flex; align-items: center; gap: 18px; }
-
         .logo {
             width: 65px; height: 65px; border-radius: 18px;
             display: flex; align-items: center; justify-content: center;
@@ -120,7 +112,6 @@
         }
 
         h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: 0.5px; color: #fff; }
-
         .subtitle { margin-top: 5px; font-size: 15px; color: var(--muted); }
 
         .live {
@@ -128,34 +119,27 @@
             background: rgba(0, 255, 135, 0.08); border: 1px solid rgba(0, 255, 135, 0.25);
             color: #bdffde; font-weight: bold; font-size: 13px; display: flex; align-items: center; gap: 8px;
         }
-
         .live::before {
             content: ""; width: 8px; height: 8px; border-radius: 50%;
             background: var(--green); box-shadow: 0 0 10px var(--green);
         }
 
         .login-box { margin-bottom: 20px; }
-
         .login-box input {
             width: 100%; padding: 16px; border-radius: 16px; border: 1px solid var(--line);
             background: rgba(10, 15, 30, 0.8); color: white; font-size: 18px;
             outline: none; transition: 0.3s; text-align: center;
         }
-
         .login-box input:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); }
 
         .top-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-
         .stat { padding: 15px; border-radius: 18px; text-align: center; border-bottom: 4px solid var(--blue); }
-
         .stat-title { font-size: 13px; color: var(--muted); letter-spacing: 1px; }
-
         .stat-value { margin-top: 5px; font-size: 28px; font-weight: bold; font-family: 'Orbitron', sans-serif; color: #fff; }
 
         .main-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 20px; }
-
         .sentence-box { padding: 30px; border-radius: 24px; text-align: center; }
-
+        
         .question-number {
             display: inline-block; padding: 8px 16px; border-radius: 999px;
             background: rgba(255, 255, 255, 0.05); font-size: 13px; color: var(--cyan);
@@ -168,7 +152,6 @@
             overflow: hidden; display: flex; align-items: center; justify-content: center;
             box-shadow: inset 0 0 25px rgba(0,0,0,0.7);
         }
-
         .tool-image { max-width: 95%; max-height: 95%; object-fit: contain; transition: 0.3s ease; }
 
         .instruction-text { font-size: 18px; color: var(--text); margin: 15px 0; font-weight: 500; }
@@ -179,37 +162,29 @@
             background: radial-gradient(#101626, #050b14); border: 4px solid var(--line);
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
         }
-
         .countdown-wrapper.active {
             border-color: var(--cyan); box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
             animation: pulse 1s infinite alternate;
         }
-
         .countdown { font-size: 38px; font-family: 'Orbitron', sans-serif; font-weight: 700; color: var(--cyan); }
-
         @keyframes pulse { 100% { transform: scale(1.05); } }
 
         .controls { margin-top: 15px; }
-
         button {
             border: none; padding: 16px 30px; border-radius: 14px; cursor: pointer;
             font-size: 18px; font-weight: bold; transition: 0.2s ease-in-out; font-family: 'Prompt', sans-serif;
         }
-
         .start-btn {
             background: linear-gradient(135deg, var(--cyan), var(--blue)); color: #050b14;
             box-shadow: 0 8px 25px rgba(0, 240, 255, 0.3); width: 100%;
         }
-
         .start-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0, 240, 255, 0.4); }
-
         .start-btn:disabled { background: #2d3748; color: #718096; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .result-box {
             padding: 30px; border-radius: 24px; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
         }
-
         .score {
             font-size: 64px; font-weight: 900; font-family: 'Orbitron', sans-serif;
             background: linear-gradient(135deg, #fff, var(--cyan));
@@ -225,6 +200,7 @@
             background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.05);
             color: #c0d0ed; font-size: 16px; min-height: 55px; display: flex;
             align-items: center; justify-content: center;
+            word-break: break-all;
         }
 
         .teacher-box { margin-top: 20px; padding: 20px; border-radius: 18px; text-align: center; font-size: 16px; line-height: 1.6; }
@@ -260,7 +236,7 @@
                     <div class="logo">EE</div>
                     <div>
                         <h1>แบบทดสอบเรียกชื่อเครื่องมือช่างไฟฟ้าและอิเล็กทรอนิกส์</h1>
-                        <div class="subtitle">ระบบทดสอบการรับฟังเสียงพูดของนักเรียนแบบReal-Time</div>
+                        <div class="subtitle">ระบบทดสอบการรับฟังเสียงพูดของนักเรียนแบบ Real-Time</div>
                     </div>
                 </div>
                 <div class="live">AI ENGINE ONLINE</div>
@@ -324,9 +300,8 @@
     </div>
 
     <script>
-        // ตรวจสอบความปลอดภัย HTTPS เบื้องต้น
         if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
-            alert("⚠️ ข้อควรระวัง: ระบบรู้จำเสียงของเบราว์เซอร์บังคับให้เว็บไซต์ต้องมี 'https://' เท่านั้น ไม่เช่นนั้นไมโครโฟนจะถูกบล็อก กรุณาอัปโหลดโค้ดขึ้น Server หรือ GitHub Pages ก่อนทดสอบใช้งานจริงครับ");
+            alert("⚠️ ข้อควรระวัง: ระบบรู้จำเสียงของเบราว์เซอร์บังคับให้เว็บไซต์ต้องมี 'https://' เท่านั้น ไม่เช่นนั้นไมโครโฟนจะถูกบล็อก กรุณาอัปโหลดโค้ดขึ้น Server ก่อนทดสอบใช้งานจริงครับ");
         }
 
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_Dk7HTYxQ0jEQpWcMyC-Y5aRk9P_-mlykwgCcjxd0Kti2QvaKgC5M5P4TcGS7YcwRjw/exec";
@@ -354,18 +329,6 @@
         let timeLeft = 10;
         let isRunning = false;
         let hasProcessed = false;
-        
-        // เพิ่มตัวแปรสำหรับจัดการเสียงที่กำลังเล่นอยู่
-        let currentAudio = null;
-
-        // ฟังก์ชันสำหรับตัดเสียงทั้งหมด
-        function stopAllAudio() {
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-                currentAudio = null;
-            }
-        }
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
@@ -378,19 +341,26 @@
                 if (hasProcessed) return; 
                 stopState(true);
                 const speechResult = event.results[0][0].transcript.trim();
+                
+                // ถ้าระบบจับเสียงว่างเปล่าได้ (อาจเกิดจากเสียงสะท้อนของระบบเอง) ให้ยกเลิกและให้พูดใหม่
+                if(speechResult === "") {
+                    document.getElementById("status").innerHTML = "เสียงรบกวนเข้าไมค์ กดปุ่มพูดใหม่นะครับ";
+                    document.getElementById("heardText").innerHTML = "ระบบจับใจความไม่ได้ กรุณากดพูดอีกครั้ง";
+                    disableMicButton(false);
+                    return;
+                }
+                
                 executeEvaluation(speechResult);
             };
 
             recognition.onerror = function(event) {
                 console.error("Speech Error Log:", event.error);
                 
-                if (event.error === 'no-speech') {
+                if (event.error === 'no-speech' || event.error === 'aborted') {
+                    // ไม่ปรับตก 0% ทันที แต่หยุดเวลาและรอให้เด็กกดปุ่มพูดใหม่
                     stopState(true); 
                     document.getElementById("status").innerHTML = "จับเสียงไม่ได้ ลองกดพูดใหม่นะครับ";
                     document.getElementById("heardText").innerHTML = "ระบบไม่ได้ยินเสียง กรุณากดปุ่มอีกครั้ง";
-                    disableMicButton(false);
-                } else if (event.error === 'aborted') {
-                    stopState(true);
                     disableMicButton(false);
                 } else {
                     stopState(true);
@@ -453,9 +423,6 @@
 
             if (isRunning) return;
 
-            // สั่งหยุดเสียงทั้งหมดทันทีก่อนเริ่มฟังเสียงใหม่ เพื่อป้องกันเสียงสะท้อนเข้าไมค์
-            stopAllAudio();
-
             isRunning = true;
             disableMicButton(true);
             document.getElementById("status").innerHTML = "🎙️ AI กำลังฟัง...";
@@ -464,6 +431,7 @@
             document.getElementById("cdWrapper").classList.add("active");
 
             try {
+                // คำสั่งเปิดไมค์ ซึ่งทำให้ระบบมือถือส่งเสียง "ติ๊ง" ออกมาอัตโนมัติ
                 recognition.start();
             } catch (err) {
                 console.log("Hardware activation failed:", err);
@@ -500,13 +468,11 @@
                 document.getElementById("passCount").innerHTML = passCount;
                 document.getElementById("status").innerHTML = "ผ่านแล้ว ✅";
                 document.getElementById("status").className = "status pass";
-                playPassSound();
             } else {
                 failCount++;
                 document.getElementById("failCount").innerHTML = failCount;
                 document.getElementById("status").innerHTML = "ไม่ผ่าน ❌";
                 document.getElementById("status").className = "status fail";
-                playFailSound();
             }
 
             disableMicButton(true);
@@ -527,9 +493,7 @@
             
             document.getElementById("totalScore").innerHTML = Math.floor(totalAccuracySum / (currentQuestion + 1));
             
-            playFailSound();
             disableMicButton(true);
-
             setTimeout(() => { nextQuestion(); }, 2500);
         }
 
@@ -612,19 +576,6 @@
             .catch(error => {
                 console.error("❌ Error writing log:", error);
             });
-        }
-
-        // ปรับปรุงฟังก์ชันเล่นเสียงให้ใช้ผ่านตัวแปร currentAudio เพื่อให้สั่งหยุดได้
-        function playPassSound() {
-            stopAllAudio(); // เผื่อความปลอดภัย สั่งหยุดเสียงเดิมก่อน
-            currentAudio = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
-            currentAudio.play().catch(e => console.log(e));
-        }
-
-        function playFailSound() {
-            stopAllAudio(); // เผื่อความปลอดภัย สั่งหยุดเสียงเดิมก่อน
-            currentAudio = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
-            currentAudio.play().catch(e => console.log(e));
         }
     </script>
 </body>
